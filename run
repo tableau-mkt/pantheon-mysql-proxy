@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Authenticate with Terminus and pull down drush aliases
+echo "Authenticating to Pantheon"
+drush cc drush
+drush pauth ${PANTHEON_EMAIL} --password=${PANTHEON_PASS} --verbose
+drush paliases --verbose
+
+# Return MySQL connection info from Pantheon via Terminus.
+echo "Returning MySQL credentials from Pantheon."
+MYSQL_STRING=$(drush sa @pantheon.${PANTHEON_SITE}.${PANTHEON_ENV} --with-db-url);
+
+if [[ "$MYSQL_STRING" =~ mysql:\/\/([^[:space:]]*):([^[:space:]]*)@([^[:space:]]*):([0-9]*)\/([^[:space:]]*)\' ]]; then
+  echo "Extracting MySQL credentials"
+  export PANTHEON_DB_UN=${BASH_REMATCH[1]}
+  export PANTHEON_DB_PW=${BASH_REMATCH[2]}
+  export PANTHEON_DB_HOST=${BASH_REMATCH[3]}
+  export PANTHEON_DB_PORT=${BASH_REMATCH[4]}
+fi
+
+echo "Starting MySQL proxy"
+mysql-proxy --keepalive --log-level=critical --proxy-address=0.0.0.0:3306 --proxy-backend-addresses=${PANTHEON_DB_HOST}:${PANTHEON_DB_PORT} --proxy-lua-script=/opt/auth.lua --plugins=proxy
