@@ -10,7 +10,7 @@ upgrades, endpoint migrations, etc.
 
 ## Installation
 1. Install [Docker][].
-2. Download the automated build from the [Docker Hub Registry][]:
+2. Download the [automated build][] from the [Docker Hub Registry][]:
    `docker pull tableaumkt/pantheon-mysql-proxy`
 3. Alternatively, you can build an image from the Dockerfile:
    `docker build -t="tableaumkt/pantheon-mysql-proxy" github.com/tableau-mkt/pantheon-mysql-proxy`
@@ -66,5 +66,6 @@ credentials are pulled and cached on start-up.
 [Pantheon]: https://pantheon.io
 [periodic connection detail changes]: https://pantheon.io/docs/articles/local/accessing-mysql-databases/
 [Docker]: https://www.docker.com/
+[automated build]: https://registry.hub.docker.com/u/tableaumkt/pantheon-mysql-proxy/
 [Docker Hub Registry]: https://registry.hub.docker.com/
 [pataquets/mysql-proxy]: https://registry.hub.docker.com/u/pataquets/mysql-proxy/
