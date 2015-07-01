@@ -1,0 +1,70 @@
+# Pantheon MySQL Proxy
+This repository contains a Dockerfile of [MySQL proxy][] that will dynamically
+proxy MySQL queries made against it to a pre-configured [Pantheon][] site and
+environment at runtime.
+
+This allows you to configure and deploy a static endpoint with your choice of
+credentials that always points to your Pantheon site's database, despite
+[periodic connection detail changes][] that occur as a result of server
+upgrades, endpoint migrations, etc.
+
+## Installation
+1. Install [Docker][].
+2. Download the automated build from the [Docker Hub Registry][]:
+   `docker pull tableaumkt/pantheon-mysql-proxy`
+3. Alternatively, you can build an image from the Dockerfile:
+   `docker build -t="tableaumkt/pantheon-mysql-proxy" github.com/tableau-mkt/pantheon-mysql-proxy`
+
+## Usage
+You should be able to deploy this image directly; everything you need to change
+is made configurable via environment variables, outlined below.
+
+#### Example run command:
+```bash
+docker run --restart=always \
+  -e "PROXY_DB_UN=pantheon_proxy" \
+  -e "PROXY_DB_PW=batteryhorsestaple" \
+  -e "PANTHEON_SITE=www-my-company" \
+  -e "PANTHEON_ENV=test" \
+  -e "PANTHEON_EMAIL=josh@getpantheon.com" \
+  -e "PANTHEON_PASS=actualPantheonPasswordHere"
+```
+
+These may also be configured/stored differently depending on your Docker deploy
+strategy.
+
+Once deployed, you can connect to your proxy as if it were a MySQL instance
+itself: `mysql --host=your.proxy.io --port=3306 --user=pantheon_proxy -p`
+
+#### Configurable variables
+
+- __`PROXY_DB_UN`__
+  - The username that you will give to your end-users to authenticate with the
+    MySQL proxy.
+- __`PROXY_DB_PW`__
+  - The password you will give to your end-users to authenticate with the MySQL
+    proxy.
+- __`PANTHEON_SITE`__
+  - The slug of the site whose database you wish to proxy.
+- __`PANTHEON_ENV`__
+  - The Pantheon environment you wish to proxy (e.g. `dev`, `test`, or `live`).
+- __`PANTHEON_EMAIL`__
+  - A Pantheon account e-mail address with dashboard access to the site
+    specified above.
+- __`PANTHEON_PASS`__
+  - The password associated with the Pantheon account specified above; used to
+    pull MySQL connection details via Pantheon's API.
+
+#### Queries no longer forwarding to the right database?
+Simply restart or re-deploy the docker image; Pantheon MySQL connection info and
+credentials are pulled and cached on start-up.
+
+### Base docker image
+- [pataquets/mysql-proxy][]
+
+[MySQL proxy]: https://dev.mysql.com/doc/mysql-proxy/en/
+[Pantheon]: https://pantheon.io
+[periodic connection detail changes]: https://pantheon.io/docs/articles/local/accessing-mysql-databases/
+[Docker]: https://www.docker.com/
+[Docker Hub Registry]: https://registry.hub.docker.com/
+[pataquets/mysql-proxy]: https://registry.hub.docker.com/u/pataquets/mysql-proxy/
