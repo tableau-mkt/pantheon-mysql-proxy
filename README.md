@@ -21,13 +21,14 @@ is made configurable via environment variables, outlined below.
 
 #### Example run command:
 ```bash
-docker run --restart=always \
+docker run \
   -e "PROXY_DB_UN=pantheon_proxy" \
   -e "PROXY_DB_PW=batteryhorsestaple" \
   -e "PANTHEON_SITE=www-my-company" \
   -e "PANTHEON_ENV=test" \
   -e "PANTHEON_EMAIL=josh@getpantheon.com" \
-  -e "PANTHEON_PASS=actualPantheonPasswordHere"
+  -e "PANTHEON_PASS=actualPantheonPasswordHere" \
+  --restart=always tableaumkt/pantheon-mysql-proxy
 ```
 
 These may also be configured/stored differently depending on your Docker deploy
