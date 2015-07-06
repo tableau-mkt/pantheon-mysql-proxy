@@ -1,4 +1,5 @@
-# Pantheon MySQL Proxy
+# Pantheon Switchboard
+![The Pantheon Switchboard](https://www.eric.pe/sites/default/files/field/image/PantheonSwitchboard.png)
 This repository contains a Dockerfile of [MySQL proxy][] that will dynamically
 proxy MySQL queries made against it to a pre-configured [Pantheon][] site and
 environment at runtime.
