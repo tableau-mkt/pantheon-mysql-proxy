@@ -19,4 +19,4 @@ if [[ "$MYSQL_STRING" =~ mysql:\/\/([^[:space:]]*):([^[:space:]]*)@([^[:space:]]
 fi
 
 echo "Starting MySQL proxy"
-mysql-proxy --keepalive --log-level=critical --proxy-address=0.0.0.0:3306 --proxy-backend-addresses=${PANTHEON_DB_HOST}:${PANTHEON_DB_PORT} --proxy-lua-script=/opt/auth.lua --plugins=proxy
+mysql-proxy --keepalive --log-level=critical --proxy-address=0.0.0.0:${PROXY_DB_PORT} --proxy-backend-addresses=${PANTHEON_DB_HOST}:${PANTHEON_DB_PORT} --proxy-lua-script=/opt/auth.lua --plugins=proxy

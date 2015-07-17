@@ -25,6 +25,7 @@ is made configurable via environment variables, outlined below.
 docker run \
   -e "PROXY_DB_UN=pantheon_proxy" \
   -e "PROXY_DB_PW=batteryhorsestaple" \
+  -e "PROXY_DB_PORT=3306" \
   -e "PANTHEON_SITE=www-my-company" \
   -e "PANTHEON_ENV=test" \
   -e "PANTHEON_EMAIL=josh@getpantheon.com" \
@@ -46,6 +47,9 @@ itself: `mysql --host=your.proxy.io --port=3306 --user=pantheon_proxy -p`
 - __`PROXY_DB_PW`__
   - The password you will give to your end-users to authenticate with the MySQL
     proxy.
+- __`PROXY_DB_PORT`__
+  - The port you will give to your end-users to connect with the MySQL proxy.
+    Available so you can pack multiple instances of this image on a single host.
 - __`PANTHEON_SITE`__
   - The slug of the site whose database you wish to proxy.
 - __`PANTHEON_ENV`__

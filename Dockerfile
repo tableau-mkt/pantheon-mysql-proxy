@@ -29,6 +29,7 @@ RUN mkdir $HOME/.drush \
 # You should customize these at run-time.
 ENV PROXY_DB_UN=pantheon_proxy
 ENV PROXY_DB_PW=change-me-pw-for-proxy
+ENV PROXY_DB_PORT=3306
 ENV PANTHEON_EMAIL=test@example.com
 ENV PANTHEON_PASS=batteryhorsestaple
 ENV PANTHEON_SITE=example
