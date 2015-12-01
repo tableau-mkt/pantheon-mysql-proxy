@@ -57,3 +57,29 @@ function read_auth()
         return proxy.PROXY_SEND_QUERY
     end
 end
+
+---
+-- ensure default dbs are in sync
+--
+function read_query( packet )
+    local c = proxy.connection.client
+    local s = proxy.connection.server
+
+    if true or c.default_db and c.default_db ~= s.default_db then
+        -- sync the client-side default_db with the server-side default_db
+        proxy.queries:append(2, string.char(proxy.COM_INIT_DB) .. c.default_db,  { resultset_is_needed = true })
+    end
+    proxy.queries:append(1, packet,  { resultset_is_needed = true })
+
+    return proxy.PROXY_SEND_QUERY
+end
+
+---
+-- ensure default dbs are in sync
+--
+function read_query_result( inj )
+    if inj.id ~= 1 then
+        -- ignore the result of the USE <default_db>
+        return proxy.PROXY_IGNORE_RESULT
+    end
+end
