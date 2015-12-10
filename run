@@ -2,15 +2,13 @@
 
 # Authenticate with Terminus and pull down drush aliases
 echo "Authenticating to Pantheon"
-drush cc drush
-drush pauth ${PANTHEON_EMAIL} --password=${PANTHEON_PASS} --verbose
-drush paliases --verbose
+terminus auth login ${PANTHEON_EMAIL} --password=${PANTHEON_PASS} --verbose
 
 # Return MySQL connection info from Pantheon via Terminus.
 echo "Returning MySQL credentials from Pantheon."
-MYSQL_STRING=$(drush sa @pantheon.${PANTHEON_SITE}.${PANTHEON_ENV} --with-db-url);
+MYSQL_STRING=$(terminus site connection-info --site=${PANTHEON_SITE} --env=${PANTHEON_ENV} --field=mysql_url);
 
-if [[ "$MYSQL_STRING" =~ mysql:\/\/([^[:space:]]*):([^[:space:]]*)@([^[:space:]]*):([0-9]*)\/([^[:space:]]*)\' ]]; then
+if [[ "$MYSQL_STRING" =~ mysql:\/\/([^[:space:]]*):([^[:space:]]*)@([^[:space:]]*):([0-9]*)\/([^[:space:]]*) ]]; then
   echo "Extracting MySQL credentials"
   export PANTHEON_DB_UN=${BASH_REMATCH[1]}
   export PANTHEON_DB_PW=${BASH_REMATCH[2]}
