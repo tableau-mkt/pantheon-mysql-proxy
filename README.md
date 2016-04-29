@@ -28,9 +28,9 @@ docker run \
   -e "PROXY_DB_PORT=3306" \
   -e "PANTHEON_SITE=www-my-company" \
   -e "PANTHEON_ENV=test" \
-  -e "PANTHEON_EMAIL=josh@getpantheon.com" \
-  -e "PANTHEON_PASS=actualPantheonPasswordHere" \
-  --restart=always tableaumkt/pantheon-mysql-proxy
+  -e "PANTHEON_TOKEN=3x4mp130-1337-m4ch-1n30-t0k3n0000000" \
+  -p 3306:3006/tcp \
+  -d --restart=always tableaumkt/pantheon-mysql-proxy
 ```
 
 These may also be configured/stored differently depending on your Docker deploy
@@ -54,12 +54,8 @@ itself: `mysql --host=your.proxy.io --port=3306 --user=pantheon_proxy -p`
   - The slug of the site whose database you wish to proxy.
 - __`PANTHEON_ENV`__
   - The Pantheon environment you wish to proxy (e.g. `dev`, `test`, or `live`).
-- __`PANTHEON_EMAIL`__
-  - A Pantheon account e-mail address with dashboard access to the site
-    specified above.
-- __`PANTHEON_PASS`__
-  - The password associated with the Pantheon account specified above; used to
-    pull MySQL connection details via Pantheon's API.
+- __`PANTHEON_TOKEN`__
+  - A [Pantheon machine token][] with access to the site specified above.
 
 #### Queries no longer forwarding to the right database?
 Simply restart or re-deploy the docker image; Pantheon MySQL connection info and
@@ -74,4 +70,5 @@ credentials are pulled and cached on start-up.
 [Docker]: https://www.docker.com/
 [automated build]: https://registry.hub.docker.com/u/tableaumkt/pantheon-mysql-proxy/
 [Docker Hub Registry]: https://registry.hub.docker.com/
+[Pantheon machine token]: https://pantheon.io/docs/machine-tokens/
 [pataquets/mysql-proxy]: https://registry.hub.docker.com/u/pataquets/mysql-proxy/

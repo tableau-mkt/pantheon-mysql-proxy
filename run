@@ -2,7 +2,15 @@
 
 # Authenticate with Terminus and pull down drush aliases
 echo "Authenticating to Pantheon"
-terminus auth login ${PANTHEON_EMAIL} --password=${PANTHEON_PASS} --verbose
+if [ -z "${PANTHEON_TOKEN}" ]; then
+  # Backwards compatibility pre-machine token.
+  terminus auth login ${PANTHEON_EMAIL} --password=${PANTHEON_PASS}
+  echo "Warning: authentication via e-mail and password is deprecated and will be removed in a future release."
+  echo "Please start using machine tokens via the PANTHEON_TOKEN environment variable."
+else
+  echo "...Using a machine token."
+  terminus auth login --machine-token=${PANTHEON_TOKEN}
+fi
 
 # Return MySQL connection info from Pantheon via Terminus.
 echo "Returning MySQL credentials from Pantheon."
