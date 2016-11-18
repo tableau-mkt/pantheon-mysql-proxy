@@ -18,7 +18,7 @@ upgrades, endpoint migrations, etc.
 
 ## Usage
 You should be able to deploy this image directly; everything you need to change
-is made configurable via environment variables, outlined below.
+is made configurable via environment variables or arguments, outlined below.
 
 #### Example run command:
 ```bash
@@ -29,8 +29,8 @@ docker run \
   -e "PANTHEON_SITE=www-my-company" \
   -e "PANTHEON_ENV=test" \
   -e "PANTHEON_TOKEN=3x4mp130-1337-m4ch-1n30-t0k3n0000000" \
-  -p 3306:3006/tcp \
-  -d --restart=always tableaumkt/pantheon-mysql-proxy
+  -p 3306:3306/tcp \
+  -d --restart=always tableaumkt/pantheon-mysql-proxy --prefer-replica
 ```
 
 These may also be configured/stored differently depending on your Docker deploy
@@ -56,6 +56,20 @@ itself: `mysql --host=your.proxy.io --port=3306 --user=pantheon_proxy -p`
   - The Pantheon environment you wish to proxy (e.g. `dev`, `test`, or `live`).
 - __`PANTHEON_TOKEN`__
   - A [Pantheon machine token][] with access to the site specified above.
+
+#### Arguments
+
+There are also some run-time arguments that you can provide to alter the way the
+connection is made back to Pantheon.
+
+- __`--prefer-replica`__
+  - When provided, the container will attempt to use the replica/slave database
+    set up for the site/environment on Pantheon. If none is available, it will
+    transparently fallback to the primary DB.
+- __`--require-replica`__
+  - When provided, the container will attempt to use the replica/slave database
+    set up for the site/environment on Pantheon. If none is available, the
+    process will immediately exit with code 1.
 
 #### Queries no longer forwarding to the right database?
 Simply restart or re-deploy the docker image; Pantheon MySQL connection info and

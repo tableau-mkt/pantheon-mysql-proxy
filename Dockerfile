@@ -17,8 +17,11 @@ RUN apt-get -qq update \
     php5-common \
     php5-curl \
   && apt-get clean
-RUN curl https://github.com/pantheon-systems/terminus/releases/download/0.11.1/terminus.phar -L -o /usr/local/bin/terminus \
-  && chmod +x /usr/local/bin/terminus
+RUN curl https://github.com/pantheon-systems/terminus/releases/download/0.13.4/terminus.phar -L -o /usr/local/bin/terminus \
+  && chmod +x /usr/local/bin/terminus \
+  && mkdir $HOME/terminus && mkdir $HOME/terminus/plugins \
+  && curl https://github.com/tableau-mkt/terminus-replica/archive/0.1.0.tar.gz -L -o $HOME/terminus/plugins/replica.tar.gz \
+  && cd $HOME/terminus/plugins && tar -zxvf replica.tar.gz
 
 # You should customize these at run-time.
 ENV PROXY_DB_UN=pantheon_proxy

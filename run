@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# Read in some arguments.
+while test $# -gt 0; do
+  case "$1" in
+    --prefer-replica)
+      export USE_REPLICA='preferred'
+      shift
+    ;;
+    --require-replica)
+      export USE_REPLICA='required'
+      shift
+    ;;
+  esac
+done
+
 # Authenticate with Terminus and pull down drush aliases
 echo "Authenticating to Pantheon"
 if [ -z "${PANTHEON_TOKEN}" ]; then
@@ -14,7 +28,23 @@ fi
 
 # Return MySQL connection info from Pantheon via Terminus.
 echo "Returning MySQL credentials from Pantheon."
-MYSQL_STRING=$(terminus site connection-info --site=${PANTHEON_SITE} --env=${PANTHEON_ENV} --field=mysql_url);
+if [ -z "${USE_REPLICA}" ]; then
+  echo "...For primary DB."
+  MYSQL_STRING=$(terminus site connection-info --site=${PANTHEON_SITE} --env=${PANTHEON_ENV} --field=mysql_url);
+else
+  # If a replica was required or preferred, pull replica connection details.
+  echo "...For replica DB."
+  MYSQL_STRING=$(terminus site connection-info --site=${PANTHEON_SITE} --env=${PANTHEON_ENV} --field=mysql_replica_url)
+
+  if [ "${USE_REPLICA}" = "required" ]; then
+    # If a replica connection was required and none was found, exit.
+    test $MYSQL_STRING || exit 1
+  elif [ "${USE_REPLICA}" = "preferred" ]; then
+    # If a replica connection was merely preferred
+    test $MYSQL_STRING || MYSQL_STRING=$(terminus site connection-info --site=${PANTHEON_SITE} --env=${PANTHEON_ENV} --field=mysql_url);
+  fi
+fi
+
 
 if [[ "$MYSQL_STRING" =~ mysql:\/\/([^[:space:]]*):([^[:space:]]*)@([^[:space:]]*):([0-9]*)\/([^[:space:]]*) ]]; then
   echo "Extracting MySQL credentials"
