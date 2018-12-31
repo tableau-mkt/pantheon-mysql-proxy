@@ -15,33 +15,25 @@ while test $# -gt 0; do
 done
 
 # Authenticate with Terminus and pull down drush aliases
-echo "Authenticating to Pantheon"
-if [ -z "${PANTHEON_TOKEN}" ]; then
-  # Backwards compatibility pre-machine token.
-  terminus auth login ${PANTHEON_EMAIL} --password=${PANTHEON_PASS}
-  echo "Warning: authentication via e-mail and password is deprecated and will be removed in a future release."
-  echo "Please start using machine tokens via the PANTHEON_TOKEN environment variable."
-else
-  echo "...Using a machine token."
-  terminus auth login --machine-token=${PANTHEON_TOKEN}
-fi
+echo "Authenticating to Pantheon using a machine token."
+terminus auth:login --machine-token=${PANTHEON_TOKEN}
 
 # Return MySQL connection info from Pantheon via Terminus.
 echo "Returning MySQL credentials from Pantheon."
 if [ -z "${USE_REPLICA}" ]; then
   echo "...For primary DB."
-  MYSQL_STRING=$(terminus site connection-info --site=${PANTHEON_SITE} --env=${PANTHEON_ENV} --field=mysql_url);
+  MYSQL_STRING=$(terminus connection:info ${PANTHEON_SITE}.${PANTHEON_ENV} --field=mysql_url);
 else
   # If a replica was required or preferred, pull replica connection details.
   echo "...For replica DB."
-  MYSQL_STRING=$(terminus site connection-info --site=${PANTHEON_SITE} --env=${PANTHEON_ENV} --field=mysql_replica_url)
+  MYSQL_STRING=$(terminus connection:info ${PANTHEON_SITE}.${PANTHEON_ENV} --field=mysql_replica_url)
 
   if [ "${USE_REPLICA}" = "required" ]; then
     # If a replica connection was required and none was found, exit.
     test $MYSQL_STRING || exit 1
   elif [ "${USE_REPLICA}" = "preferred" ]; then
     # If a replica connection was merely preferred
-    test $MYSQL_STRING || MYSQL_STRING=$(terminus site connection-info --site=${PANTHEON_SITE} --env=${PANTHEON_ENV} --field=mysql_url);
+    test $MYSQL_STRING || MYSQL_STRING=$(terminus connection:info ${PANTHEON_SITE}.${PANTHEON_ENV} --field=mysql_url);
   fi
 fi
 
